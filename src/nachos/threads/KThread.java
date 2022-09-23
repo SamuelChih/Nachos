@@ -273,8 +273,14 @@ public class KThread {
      * thread.
      */
     private ThreadQueue joinQueue = null;
-    public void join() {                                                                //change this
-    
+    public void join() {                                                                        //change this, hard :-/
+        
+        /*How 2 do it: 
+         * Call finish, wake up thread in Queue
+         * Queue can not be static
+         * Calls sleep 
+         * Use condition veriable in Kthread to do it.
+         */
 		Lib.debug(dbgThread, "Joining to thread: " + toString());
 
 		Lib.assertTrue(this != currentThread);

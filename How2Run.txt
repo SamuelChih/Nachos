@@ -1,0 +1,5 @@
+1. Open Cywin
+2. cd to path below (Change proj1 to pj needed)
+cd ~/nachos/src/nachos/proj1
+make
+../bin/nachos

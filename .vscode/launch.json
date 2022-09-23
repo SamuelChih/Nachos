@@ -1,10 +1,3 @@
-1. Open Cywin
-2. cd to path below (Change proj1 to pj needed)
-cd ~/nachos/src/nachos/proj1
-make
-../bin/nachos
-
-or in lunch.json edit
 {
     // Use IntelliSense to learn about possible attributes.
     // Hover to view descriptions of existing attributes.
@@ -22,7 +15,7 @@ or in lunch.json edit
             "name": "Launch Machine",
             "request": "launch",
             "mainClass": "nachos.machine.Machine",
-            "args": "nachos -- nachos.ag.ThreadGrader1", //Change this to the thread greader u want
+            "args": "nachos -- nachos.ag.ThreadGrader1",
             "projectName": "Nachos"
         }
     ]

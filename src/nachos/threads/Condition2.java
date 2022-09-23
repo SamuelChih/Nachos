@@ -1,4 +1,4 @@
-package nachos.threads;
+package nachos.threads; //Change this one too 
 
 import nachos.machine.*;
 
@@ -24,6 +24,8 @@ public class Condition2 {
 	this.conditionLock = conditionLock;
     }
 
+    //Creste something simular using thread kernal 
+    private ThreadQueue waitQueue = ThreadedKernel.scheduler.newThreadQueue(true);
     /**
      * Atomically release the associated lock and go to sleep on this condition
      * variable until another thread wakes it using <tt>wake()</tt>. The
@@ -32,9 +34,9 @@ public class Condition2 {
      */
     public void sleep() {
 	Lib.assertTrue(conditionLock.isHeldByCurrentThread());
-
+    //waitQ.threadQ put current thread into Q. 
 	conditionLock.release();
-
+    KThread.sleep();
 	conditionLock.acquire();
     }
 

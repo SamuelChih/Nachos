@@ -46,16 +46,21 @@ public class RoundRobinScheduler extends Scheduler {
 	 * Remove a thread from the beginning of the queue.
 	 *
 	 * @return	the first thread on the queue, or <tt>null</tt> if the
-	 *	       	queue is
-	 *		empty.
+	 *	       	queue is empty.
 	 */
 	public KThread nextThread() {
 	    Lib.assertTrue(Machine.interrupt().disabled());
 		       
-	    if (waitQueue.isEmpty())
-		return null;
+	    if (waitQueue.isEmpty()){
+			return null;
+		}
 
 	    return (KThread) waitQueue.removeFirst();
+	}
+
+	public boolean isEmpty() {
+	    Lib.assertTrue(Machine.interrupt().disabled());    
+	    return (waitQueue.isEmpty());
 	}
 
 	/**

@@ -21,11 +21,17 @@ public class Condition2 {
      *				<tt>wake()</tt>, or <tt>wakeAll()</tt>.
      */
     public Condition2(Lock conditionLock) {
-	this.conditionLock = conditionLock;
+	    this.conditionLock = conditionLock;
     }
 
-    //Creste something simular using thread kernal 
-    private ThreadQueue waitQueue = ThreadedKernel.scheduler.newThreadQueue(true);
+    //Create something simular using thread kernal,put current thread into Q. 
+    private ThreadQueue waitQueue = 
+    ThreadedKernel.scheduler.newThreadQueue(true);
+    
+    //ThreadQueue emptyQueue =ThreadedKernel.scheduler.newThreadQueue(transferPriority)
+    
+    
+    //private ThreadQueue emptyQueue = ThreadedKernel.scheduler.newThreadQueue(true);
     /**
      * Atomically release the associated lock and go to sleep on this condition
      * variable until another thread wakes it using <tt>wake()</tt>. The
@@ -33,28 +39,46 @@ public class Condition2 {
      * automatically reacquire the lock before <tt>sleep()</tt> returns.
      */
     public void sleep() {
-	Lib.assertTrue(conditionLock.isHeldByCurrentThread());
-    //waitQ.threadQ put current thread into Q. 
-	conditionLock.release();
-    KThread.sleep();
-	conditionLock.acquire();
+        Lib.assertTrue(conditionLock.isHeldByCurrentThread());
+        boolean currentStat = Machine.interrupt().disable(); 
+        conditionLock.release();
+        waitQueue.waitForAccess(KThread.currentThread());
+        KThread.sleep();
+        conditionLock.acquire();
+        Machine.interrupt().restore(currentStat);
     }
 
-    /**
-     * Wake up at most one thread sleeping on this condition variable. The
-     * current thread must hold the associated lock.
-     */
-    public void wake() {
-	Lib.assertTrue(conditionLock.isHeldByCurrentThread());
-    }
+	/**
+	 * Wake up at most one thread sleeping on this condition variable. The
+	 * current thread must hold the associated lock.
+	 */
+	public void wake() {
+		Lib.assertTrue(conditionLock.isHeldByCurrentThread());
+		
+		boolean status = Machine.interrupt().disable(); 
+		
+        //while there is nothing in waitQueue
+		if (!waitQueue.isEmpty())
+		{   
+			waitQueue.nextThread().ready();
+            
+        }
+		Machine.interrupt().restore(status);
+	}
 
-    /**
-     * Wake up all threads sleeping on this condition variable. The current
-     * thread must hold the associated lock.
-     */
-    public void wakeAll() {
-	Lib.assertTrue(conditionLock.isHeldByCurrentThread());
-    }
+	/**
+	 * Wake up all threads sleeping on this condition variable. The current
+	 * thread must hold the associated lock.
+	 */
+	public void wakeAll() {
+		Lib.assertTrue(conditionLock.isHeldByCurrentThread());
+		
+        //while there is nothing in waitQueue
+		while(!waitQueue.isEmpty()){
+            wake();
+		}
+	}
+
 
     private Lock conditionLock;
 }

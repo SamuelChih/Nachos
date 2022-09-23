@@ -21,7 +21,6 @@ import nachos.threads.ThreadedKernel;
  */
 public class ThreadGrader1 extends BasicTestGrader
 {
-  
   static int turn = 0;
   static Lock lock = null;
   static Condition2[] cond = null;
@@ -35,7 +34,7 @@ public class ThreadGrader1 extends BasicTestGrader
       "this test requires roundrobin scheduler");
     
     lock = new Lock();
-    cond = new Condition2[totalMax];
+    cond = new Condition2[totalMax]; 
     for (int i = 0; i < totalMax; ++i)
     {
       cond[i] = new Condition2(lock);
@@ -92,7 +91,7 @@ public class ThreadGrader1 extends BasicTestGrader
       {
         cond[n].sleep();
       }
-      // System.out.println(KThread.currentThread() + " print " + n);
+       System.out.println(KThread.currentThread() + " print " + n);
       ++count;
       turn = (turn + 1) % total;
       cond[turn].wake();

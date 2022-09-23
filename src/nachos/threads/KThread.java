@@ -181,7 +181,7 @@ public class KThread {
      * destroyed automatically by the next thread to run, when it is safe to
      * delete this thread.
      */
-    public static void finish() {
+    public static void finish() {                                                       //Chang this
 	Lib.debug(dbgThread, "Finishing thread: " + currentThread.toString());
 	
 	Machine.interrupt().disable();
@@ -272,10 +272,12 @@ public class KThread {
      * call is not guaranteed to return. This thread must not be the current
      * thread.
      */
-    public void join() {
-	Lib.debug(dbgThread, "Joining to thread: " + toString());
+    private ThreadQueue joinQueue = null;
+    public void join() {                                                                //change this
+    
+		Lib.debug(dbgThread, "Joining to thread: " + toString());
 
-	Lib.assertTrue(this != currentThread);
+		Lib.assertTrue(this != currentThread);
 
     }
 

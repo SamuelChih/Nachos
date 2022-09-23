@@ -142,8 +142,8 @@ public class PriorityScheduler extends Scheduler {
 
 	public KThread nextThread() {
 	    Lib.assertTrue(Machine.interrupt().disabled());
-	    // implement me
-	    return null;
+		return null;
+		
 	}
 
 	/**
@@ -158,6 +158,12 @@ public class PriorityScheduler extends Scheduler {
 	    return null;
 	}
 	
+
+	public boolean isEmpty() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+	
 	public void print() {
 	    Lib.assertTrue(Machine.interrupt().disabled());
 	    // implement me (if you want)
@@ -168,6 +174,7 @@ public class PriorityScheduler extends Scheduler {
 	 * threads to the owning thread.
 	 */
 	public boolean transferPriority;
+
     }
 
     /**

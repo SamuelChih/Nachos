@@ -1,4 +1,7 @@
 package nachos.threads;
+
+import javax.swing.text.StyledEditorKit.BoldAction;
+
 //This also need to be changes too
 /**
  * Schedules access to some sort of resource with limited access constraints. A
@@ -95,4 +98,7 @@ public abstract class ThreadQueue {
      * Print out all the threads waiting for access, in no particular order.
      */
     public abstract void print();
+
+    public abstract boolean isEmpty();
+    
 }

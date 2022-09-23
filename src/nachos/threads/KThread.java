@@ -1,6 +1,6 @@
 package nachos.threads;
 
-import nachos.machine.*;
+import nachos.machine.*; //Change this file
 
 /**
  * A KThread is a thread that can be used to execute Nachos kernel code. Nachos

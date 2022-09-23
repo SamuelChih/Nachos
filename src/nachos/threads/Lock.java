@@ -61,7 +61,7 @@ public class Lock {
 	if ((lockHolder = waitQueue.nextThread()) != null)
 	    lockHolder.ready();
 	
-	Machine.interrupt().restore(intStatus);
+	Machine.interrupt().restore(intStatus); //Test if it is disabled, bc we want it to run atomicclly, machine timer cause context switches
     }
 
     /**

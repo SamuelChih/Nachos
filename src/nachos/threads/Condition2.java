@@ -55,7 +55,7 @@ public class Condition2 {
 	public void wake() {
 		Lib.assertTrue(conditionLock.isHeldByCurrentThread());
 		
-		boolean status = Machine.interrupt().disable(); 
+		boolean currentStat = Machine.interrupt().disable(); 
 		
         //while there is nothing in waitQueue
 		if (!waitQueue.isEmpty())
@@ -63,7 +63,7 @@ public class Condition2 {
 			waitQueue.nextThread().ready();
             
         }
-		Machine.interrupt().restore(status);
+		Machine.interrupt().restore(currentStat);
 	}
 
 	/**

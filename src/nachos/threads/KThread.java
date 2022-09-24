@@ -181,20 +181,25 @@ public class KThread {
      * destroyed automatically by the next thread to run, when it is safe to
      * delete this thread.
      */
-    public static void finish() {                                                       //Chang this
-	Lib.debug(dbgThread, "Finishing thread: " + currentThread.toString());
-	
-	Machine.interrupt().disable();
+    public static void finish() {                                                       //Change this
+        Lib.debug(dbgThread, "Finishing thread: " + currentThread.toString());    
+        Machine.interrupt().disable();
+        Machine.autoGrader().finishingCurrentThread();
+        Lib.assertTrue(toBeDestroyed == null);
+        toBeDestroyed = currentThread;
 
-	Machine.autoGrader().finishingCurrentThread();
+        if (currentThread.joinQueue !=null) {
+          //isEmpty() will give null pointer exception for unknown reason
+          KThread nextJoined = currentThread.joinQueue.nextThread();
+          if (nextJoined != null) {
+            nextJoined.ready();
+            nextJoined =currentThread.joinQueue.nextThread();
+          }
 
-	Lib.assertTrue(toBeDestroyed == null);
-	toBeDestroyed = currentThread;
+        }            
 
-
-	currentThread.status = statusFinished;
-	
-	sleep();
+        currentThread.status = statusFinished;
+        sleep();
     }
 
     /**
@@ -273,7 +278,7 @@ public class KThread {
      * thread.
      */
     private ThreadQueue joinQueue = null;
-    public void join() {                                                                        //change this, hard :-/
+    public void join() {                                                         //change this, hard :/
         
         /*How 2 do it: 
          * Call finish, wake up thread in Queue
@@ -284,6 +289,19 @@ public class KThread {
 		Lib.debug(dbgThread, "Joining to thread: " + toString());
 
 		Lib.assertTrue(this != currentThread);
+
+        if (status != statusFinished) {
+            boolean currentStat = Machine.interrupt().disable();
+            //if (!joinQueue.isEmpty()) {
+            if (joinQueue == null) {
+                joinQueue = ThreadedKernel.scheduler.newThreadQueue(true);
+				joinQueue.acquire(this); // all threads in queue waits on this thread
+            }
+            joinQueue.waitForAccess(currentThread);
+            currentThread.sleep();
+            Machine.interrupt().restore(currentStat);
+
+        }
 
     }
 

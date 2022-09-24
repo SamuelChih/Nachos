@@ -15,7 +15,7 @@
             "name": "Launch Machine",
             "request": "launch",
             "mainClass": "nachos.machine.Machine",
-            "args": "nachos -- nachos.ag.ThreadGrader9",
+            "args": "nachos -- nachos.ag.ThreadGrader3",
             "projectName": "Nachos"
         }
     ]

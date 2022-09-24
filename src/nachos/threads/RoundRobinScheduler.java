@@ -57,7 +57,7 @@ public class RoundRobinScheduler extends Scheduler {
 
 	    return (KThread) waitQueue.removeFirst();
 	}
-
+	
 	public boolean isEmpty() {
 	    Lib.assertTrue(Machine.interrupt().disabled());    
 	    return (waitQueue.isEmpty());

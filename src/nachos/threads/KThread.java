@@ -277,32 +277,29 @@ public class KThread {
      * call is not guaranteed to return. This thread must not be the current
      * thread.
      */
+            
+        /*Note in class: 
+        * Call finish, wake up thread in Queue
+        * Queue can not be static
+        * Calls sleep 
+        * Use condition veriable in Kthread to do it.
+        */
     private ThreadQueue joinQueue = null;
-    public void join() {                                                         //change this, hard :/
-        
-        /*How 2 do it: 
-         * Call finish, wake up thread in Queue
-         * Queue can not be static
-         * Calls sleep 
-         * Use condition veriable in Kthread to do it.
-         */
+    public void join() {                                                       
 		Lib.debug(dbgThread, "Joining to thread: " + toString());
 
-		Lib.assertTrue(this != currentThread);
-
+		Lib.assertTrue(this != KThread.currentThread);
+        boolean currentStat = Machine.interrupt().disable();
         if (status != statusFinished) {
-            boolean currentStat = Machine.interrupt().disable();
             //if (!joinQueue.isEmpty()) {
             if (joinQueue == null) {
                 joinQueue = ThreadedKernel.scheduler.newThreadQueue(true);
-				joinQueue.acquire(this); // all threads in queue waits on this thread
+				joinQueue.acquire(this);
             }
             joinQueue.waitForAccess(currentThread);
-            currentThread.sleep();
-            Machine.interrupt().restore(currentStat);
-
+            KThread.sleep();
         }
-
+        Machine.interrupt().restore(currentStat);
     }
 
     /**

@@ -22,7 +22,7 @@ public class ThreadGrader9 extends BasicTestGrader {
 	public void run() {
 
 		/* Test ThreadGrader9: Tests priority scheduler without donation */
-		total = 4;
+		total = 400;
 		count = 0;
 		set.clear();
 		for (int i = 0; i < total; ++i)

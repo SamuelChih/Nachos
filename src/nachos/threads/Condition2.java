@@ -60,8 +60,7 @@ public class Condition2 {
         //while there is nothing in waitQueue
 		if (!waitQueue.isEmpty())
 		{   
-			waitQueue.nextThread().ready();
-            
+			waitQueue.nextThread().ready(); 
         }
 		Machine.interrupt().restore(currentStat);
 	}

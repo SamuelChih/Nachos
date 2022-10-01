@@ -24,7 +24,7 @@ public class Alarm {
      * The timer interrupt handler. This is called by the machine's timer
      * periodically (approximately every 500 clock ticks). Causes the current
      * thread to yield, forcing a context switch if there is another thread
-     * that should be run.
+     * that should be run 
      */
     public void timerInterrupt() {
 	KThread.currentThread().yield();

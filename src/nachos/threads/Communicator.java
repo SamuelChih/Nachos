@@ -13,11 +13,11 @@ import nachos.machine.*;
  * Implement synchronous send and receive of one word messages (also known as Ada-style rendezvous), 
  * using condition variables (don’t use semaphores!). Implement the Communicator class with operations, 
  * void speak(int word) and int listen(). speak() atomically waits until listen() is called on the same Communicator object,
- *  and then transfers the word over to listen(). Once the transfer is made, both can return. Similarly, listen() waits until speak() is called,
- *  at which point the transfer is made, and both can return (listen() returns the word). This means that neither thread may return from listen() 
+ * and then transfers the word over to listen(). Once the transfer is made, both can return. Similarly, listen() waits until speak() is called,
+ * at which point the transfer is made, and both can return (listen() returns the word). This means that neither thread may return from listen() 
  * or speak() until the word transfer has been made. Your solution should work even if there are multiple speakers and listeners for the same Communicator 
  * (note: this is equivalent to a zero-length bounded buffer; since the buffer has no room, the producer and consumer must interact directly, requiring that
- *  they wait for one another). Each communicator should only use exactly one lock. If you’re using more than one lock, you’re making things too complicated.
+ * they wait for one another). Each communicator should only use exactly one lock. If you’re using more than one lock, you’re making things too complicated.
 
 ***
  */
@@ -26,6 +26,11 @@ public class Communicator {
      * Allocate a new communicator.
      */
     public Communicator() {
+        lock =new Lock();
+		sleepSpeakers=new Condition(lock);
+		sleepListeners=new Condition(lock);
+        Speaking = new Condition(lock);
+		used=false;
     }
 
     /**
@@ -39,6 +44,7 @@ public class Communicator {
      * @param	word	the integer to transfer.
      */
     public void speak(int word) {
+
     }
 
     /**
@@ -50,4 +56,15 @@ public class Communicator {
     public int listen() {
 	return 0;
     }
+    private int listener;
+    private Lock lock;
+    private Condition sleepSpeakers;
+    private Condition sleepListeners;
+    private Condition Speaking;
+    private boolean used;
+    
+
+
 }
+
+

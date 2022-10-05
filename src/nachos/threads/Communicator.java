@@ -11,7 +11,7 @@ import nachos.machine.*;
  * 
  * 
  * Implement synchronous send and receive of one word messages (also known as Ada-style rendezvous), 
- * using condition variables (don’t use semaphores!). Implement the Communicator class with operations, 
+ * using Condition2 variables (don’t use semaphores!). Implement the Communicator class with operations, 
  * void speak(int word) and int listen(). speak() atomically waits until listen() is called on the same Communicator object,
  * and then transfers the word over to listen(). Once the transfer is made, both can return. Similarly, listen() waits until speak() is called,
  * at which point the transfer is made, and both can return (listen() returns the word). This means that neither thread may return from listen() 
@@ -22,15 +22,16 @@ import nachos.machine.*;
 ***
  */
 public class Communicator {
+
+
     /**
      * Allocate a new communicator.
      */
     public Communicator() {
         lock =new Lock();
-		sleepSpeakers=new Condition(lock);
-		sleepListeners=new Condition(lock);
-        Speaking = new Condition(lock);
-		used=false;
+		speakers=new Condition2(lock);
+		listeners=new Condition2(lock);
+        listenmsg=0;
     }
 
     /**
@@ -42,9 +43,21 @@ public class Communicator {
      * Exactly one listener should receive <i>word</i>.
      *
      * @param	word	the integer to transfer.
+     * 
+     * lock.acquire();lock.release(); are SOP
      */
     public void speak(int word) {
+        lock.acquire();
+        while (listenmsg == 1){
+            speakers.sleep();
+        }
+        currentmsg = word;
+        ++listenmsg;
+        if (listenmsg == 1){
+            listeners.wake();
+        } 
 
+        lock.release();
     }
 
     /**
@@ -54,16 +67,23 @@ public class Communicator {
      * @return	the integer transferred.
      */    
     public int listen() {
-	return 0;
+        lock.acquire();
+        while (listenmsg==0) {
+            listeners.sleep();
+        }
+        --listenmsg;
+        if (listenmsg==0) {
+            speakers.wake();
+        }
+        lock.release();
+        return currentmsg;
     }
-    private int listener;
-    private Lock lock;
-    private Condition sleepSpeakers;
-    private Condition sleepListeners;
-    private Condition Speaking;
-    private boolean used;
-    
 
+    private int currentmsg;
+    private Lock lock;
+    private Condition2 speakers;
+    private Condition2 listeners;
+    private int listenmsg;
 
 }
 

@@ -129,7 +129,7 @@ public class ThreadGrader2 extends BasicTestGrader
     public void run ()
     {
       int w = com.listen();
-      assertTrue(list.contains(new Integer(w)), "unknown message received");
+      assertTrue(list.contains(new Integer(w)), "unknown message received"); //Print msg getting listened no matter if it is used or not
       list.remove(new Integer(w));
       System.out.println(KThread.currentThread() + " listened " + w);
       ++count;

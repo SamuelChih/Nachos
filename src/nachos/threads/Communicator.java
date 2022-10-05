@@ -9,6 +9,10 @@ import nachos.machine.*;
  * be a time when both a speaker and a listener are waiting, because the two
  * threads can be paired off at this point.
  * 
+ * Use when dont want to have shared data
+ * 
+ * Use linked list/Queue in Com
+ * Thread can not control when to put in there
  * 
  * Implement synchronous send and receive of one word messages (also known as Ada-style rendezvous), 
  * using Condition2 variables (don’t use semaphores!). Implement the Communicator class with operations, 
@@ -75,6 +79,7 @@ public class Communicator {
         if (listenmsg==0) {
             speakers.wake();
         }
+
         lock.release();
         return currentmsg;
     }

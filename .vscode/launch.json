@@ -1,7 +1,5 @@
 {
-    // Use IntelliSense to learn about possible attributes.
-    // Hover to view descriptions of existing attributes.
-    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    // 2 for com and 4 for alarm
     "version": "0.2.0",
     "configurations": [
         {
@@ -15,7 +13,7 @@
             "name": "Launch Machine",
             "request": "launch",
             "mainClass": "nachos.machine.Machine",
-            "args": "nachos -- nachos.ag.ThreadGrader2",
+            "args": "nachos -- nachos.ag.ThreadGrader4",
             "projectName": "Nachos"
         }
     ]

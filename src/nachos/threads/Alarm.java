@@ -10,7 +10,9 @@ import nachos.machine.Machine;
  * Uses the hardware timer to provide preemption, and to allow threads to sleep
  * until a certain time.
  * 
- * 
+ * - Can use multiple condition veriable (and should)
+ * - Dont use condition veriable to queue up thread
+ * - Condition veriable to put it awake and sleep
  * 
  * Complete the implementation of the Alarm class, by implementing the waitUntil(long x) method using condition variables. 
  * A thread calls waitUntil to suspend its own execution until time has advanced to at least now + x. This is useful for threads 
@@ -47,7 +49,7 @@ public class Alarm {
             waitQueue.remove().getThread().ready();
         }
         Machine.interrupt().restore(Status);
-        KThread.currentThread().yield();
+        //KThread.currentThread().yield();
     }
 
     /**
@@ -73,11 +75,12 @@ public class Alarm {
         KThreadTimer threadTimer = new KThreadTimer(KThread.currentThread(), wakeTime);
         // waitQueue.add(new KThreadTimer(KThread.currentThread(), wakeTime));
         waitQueue.add(threadTimer);
-        KThread.sleep();
+        KThread.sleep();//Use condition ver to put it to sleep
         
 		Machine.interrupt().restore(Status);
     }
     
+    //Need to use PriortyQueue
     PriorityQueue<KThreadTimer> waitQueue = new PriorityQueue<KThreadTimer>();
     
 }

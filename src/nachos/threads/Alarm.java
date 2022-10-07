@@ -11,8 +11,10 @@ import nachos.machine.Machine;
  * until a certain time.
  * 
  * - Can use multiple condition veriable (and should)
- * - Dont use condition veriable to queue up thread
+ * - Dont use condition veriable to queue up thread, can have multiple for it
+ *      - use it to sleep and wake it up
  * - Condition veriable to put it awake and sleep
+ * -
  * 
  * Complete the implementation of the Alarm class, by implementing the waitUntil(long x) method using condition variables. 
  * A thread calls waitUntil to suspend its own execution until time has advanced to at least now + x. This is useful for threads 
@@ -31,7 +33,6 @@ public class Alarm {
      */
     public Alarm() {
 	Machine.timer().setInterruptHandler(new Runnable() {
-    
 
 		public void run() { timerInterrupt(); }
 	    });
@@ -73,8 +74,9 @@ public class Alarm {
         boolean Status = Machine.interrupt().disable();
 
         KThreadTimer threadTimer = new KThreadTimer(KThread.currentThread(), wakeTime);
-        // waitQueue.add(new KThreadTimer(KThread.currentThread(), wakeTime));
+        //waitQueue.add(new KThreadTimer(KThread.currentThread(), wakeTime));
         waitQueue.add(threadTimer);
+
         KThread.sleep();//Use condition ver to put it to sleep
         
 		Machine.interrupt().restore(Status);

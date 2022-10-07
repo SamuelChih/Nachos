@@ -13,6 +13,9 @@ import nachos.machine.*;
  * 
  * Use linked list/Queue in Com
  * Thread can not control when to put in there
+ * - Dont have to use Condition ver for Queue. Use it to suspend and wake thread
+ * - Use list (not necessery linked, array are better) as a queue
+ * - Dont overcomplated the
  * 
  * Implement synchronous send and receive of one word messages (also known as Ada-style rendezvous), 
  * using Condition2 variables (don’t use semaphores!). Implement the Communicator class with operations, 
@@ -22,7 +25,6 @@ import nachos.machine.*;
  * or speak() until the word transfer has been made. Your solution should work even if there are multiple speakers and listeners for the same Communicator 
  * (note: this is equivalent to a zero-length bounded buffer; since the buffer has no room, the producer and consumer must interact directly, requiring that
  * they wait for one another). Each communicator should only use exactly one lock. If you’re using more than one lock, you’re making things too complicated.
-
 ***
  */
 public class Communicator {
@@ -91,5 +93,3 @@ public class Communicator {
     private int listenmsg;
 
 }
-
-

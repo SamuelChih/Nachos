@@ -60,7 +60,7 @@ public class Communicator {
         if(!listenerQueue.isEmpty()){
             //remove the first listenerQueue and get the first number
             Message listenMessage = listenerQueue.removeFirst();
-            listenMessage.msg = word;
+            listenMessage.setMessage(word);
             listeners.wake();   
         }
         else{
@@ -83,14 +83,14 @@ public class Communicator {
         if(!speakerQueue.isEmpty()){
             //remove the first listenerQueue and get the first number
             Message speakMessage =speakerQueue.removeFirst();
-            msg=speakMessage.msg;
+            msg=speakMessage.getMessage();
             speakers.wake(); 
         }
         else{
             Message newMessage = new Message();
             listenerQueue.add(newMessage);
             listeners.sleep();
-            msg = newMessage.msg;
+            msg = newMessage.getMessage();
         }
         
         lock.release();
@@ -106,6 +106,12 @@ public class Communicator {
         }
         private Message(int i){
             this.msg=i;
+        }
+        private int getMessage() {
+            return msg;
+        }
+        private void setMessage(int msg) {
+            this.msg = msg;
         }
     }
 

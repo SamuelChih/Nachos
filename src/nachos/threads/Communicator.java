@@ -1,5 +1,8 @@
 package nachos.threads;
 
+import java.util.ArrayList;
+import java.util.LinkedList;
+
 import nachos.machine.*;
 
 /**
@@ -91,5 +94,7 @@ public class Communicator {
     private Condition2 speakers;
     private Condition2 listeners;
     private int listenmsg;
-
+    
+    private ArrayList <Integer> speakerMsg  = new ArrayList<Integer>();
+    private ArrayList <Integer> listenerMsg  = new ArrayList<Integer>();
 }

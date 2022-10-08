@@ -47,8 +47,14 @@ public class Alarm {
     public void timerInterrupt() {
         boolean Status = Machine.interrupt().disable();
         while (!waitQueue.isEmpty()&&waitQueue.peek().compareTo(Machine.timer().getTime())<=0) {
-            waitQueue.remove().getThread().ready();
+            //waitQueue.remove().getThread().ready();
+            KThreadTimer FirstQueue = waitQueue.poll();
+            lock.acquire();
+            FirstQueue.threadWeaker();;
+            lock.release();
+     
         }
+        KThread.yield();
         Machine.interrupt().restore(Status);
         //KThread.currentThread().yield();
     }
@@ -76,13 +82,54 @@ public class Alarm {
         KThreadTimer threadTimer = new KThreadTimer(KThread.currentThread(), wakeTime);
         //waitQueue.add(new KThreadTimer(KThread.currentThread(), wakeTime));
         waitQueue.add(threadTimer);
-
-        KThread.sleep();//Use condition ver to put it to sleep
-        
+        //KThread.sleep(); //Use condition ver to put it to sleep
+        KThreadTimer FirstQueue = waitQueue.peek();
+        lock.acquire();
+        FirstQueue.threadSleeper();
+        lock.release();
+ 
 		Machine.interrupt().restore(Status);
+    }
+
+    class KThreadTimer implements Comparable<Long>{
+        private KThread currentThread;
+        private long time = 0;
+        public KThreadTimer(KThread thread, long waitTime){
+            this.currentThread=thread;
+            this.time=waitTime;
+        }
+        public KThread getThread(){
+            return currentThread;
+        }
+        public long getTime(){
+            return time;
+        }
+        @Override
+        public int compareTo(Long o) {
+            if (o < this.time) {
+                return 1;		
+            } else if (o == this.time) {
+                return 0;
+            } else {
+                return -1;
+            }
+        }
+        
+        public void threadSleeper() {
+            speakers.sleep();
+        }
+        public void threadWeaker() {
+            speakers.wake();
+        }
     }
     
     //Need to use PriortyQueue
     PriorityQueue<KThreadTimer> waitQueue = new PriorityQueue<KThreadTimer>();
+    
+    private Lock lock =new Lock();
+    
+    private Condition2 speakers = new Condition2(lock);
+    
+
     
 }

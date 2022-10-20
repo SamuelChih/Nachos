@@ -26,6 +26,16 @@ import java.util.LinkedList;
  * <p>
  * A priority scheduler must partially solve the priority inversion problem; in
  * particular, priority must be donated through locks, and through joins.
+ * Thread greader 5, and 6 for donation
+ * 
+ * Track what is waiting on the thread state
+ * Priorty queue to foward resource
+ * Lock reprecent resources, inside of the lock there is a queue
+ * Priorty queue a thread that is called owner, how to keep threak 8 simple queue
+ * have a pri ququeue from java or heap have full control
+ * Can have many thread waiting on it, thread state can own different things the thing waiting on should only have one thing
+ * Move around the notes
+ * Return the cashe value when flag change, dont need to recompute priorty dont have to use nacho queue
  */
 public class PriorityScheduler extends Scheduler {
     /**

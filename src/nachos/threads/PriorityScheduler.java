@@ -5,6 +5,7 @@ import nachos.machine.*;
 import java.util.TreeSet;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
 
 /**
  * A scheduler that chooses threads based on their priorities.
@@ -264,5 +265,8 @@ public class PriorityScheduler extends Scheduler {
 	protected KThread thread;
 	/** The priority of the associated thread. */
 	protected int priority;
+
+	protected LinkedList<ThreadQueue> queueList = new LinkedList<ThreadQueue>();
+	
     }
 }

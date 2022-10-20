@@ -1,5 +1,7 @@
 package nachos.threads;
 
+import java.util.LinkedList;
+
 import nachos.machine.*;
 
 /**
@@ -37,7 +39,8 @@ public class Communicator {
         lock =new Lock();
 		speakers=new Condition2(lock);
 		listeners=new Condition2(lock);
-        listenmsg=0;
+        speakerQueue = new LinkedList<Message>();
+        listenerQueue = new LinkedList<Message>();
     }
 
     /**
@@ -54,15 +57,17 @@ public class Communicator {
      */
     public void speak(int word) {
         lock.acquire();
-        while (listenmsg == 1){
+        if(!listenerQueue.isEmpty()){
+            //remove the first listenerQueue and get the first number
+            Message listenMessage = listenerQueue.removeFirst();
+            listenMessage.setMessage(word);
+            listeners.wake();   
+        }
+        else{
+            //add the word to the speakerQueue
+            speakerQueue.add(new Message(word));
             speakers.sleep();
         }
-        currentmsg = word;
-        ++listenmsg;
-        if (listenmsg == 1){
-            listeners.wake();
-        } 
-
         lock.release();
     }
 
@@ -73,23 +78,46 @@ public class Communicator {
      * @return	the integer transferred.
      */    
     public int listen() {
+        int msg =0;
         lock.acquire();
-        while (listenmsg==0) {
+        if(!speakerQueue.isEmpty()){
+            //remove the first listenerQueue and get the first number
+            Message speakMessage =speakerQueue.removeFirst();
+            msg=speakMessage.getMessage();
+            speakers.wake(); 
+        }
+        else{
+            Message newMessage = new Message();
+            listenerQueue.add(newMessage);
             listeners.sleep();
+            msg = newMessage.getMessage();
         }
-        --listenmsg;
-        if (listenmsg==0) {
-            speakers.wake();
-        }
-
+        
         lock.release();
-        return currentmsg;
+        return msg;
+    }
+    
+
+    private class Message {
+        
+        private int msg;
+        private Message(){
+            msg = 0;
+        }
+        private Message(int i){
+            this.msg=i;
+        }
+        private int getMessage() {
+            return msg;
+        }
+        private void setMessage(int msg) {
+            this.msg = msg;
+        }
     }
 
-    private int currentmsg;
     private Lock lock;
     private Condition2 speakers;
     private Condition2 listeners;
-    private int listenmsg;
-
+    private LinkedList <Message> speakerQueue;
+    private LinkedList <Message> listenerQueue;
 }

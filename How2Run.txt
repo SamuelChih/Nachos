@@ -27,9 +27,3 @@ or in lunch.json edit
         }
     ]
 }
-
-src\nachos\threads\Condition2.java
-        try {
-            waitQueue.nextThread().ready();
-        } catch (Exception e) {
-        }

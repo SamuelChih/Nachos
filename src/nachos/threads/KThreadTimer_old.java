@@ -1,9 +1,9 @@
 package nachos.threads;
 
-public class KThreadTimer implements Comparable<Long>{
+public class KThreadTimer_old implements Comparable<Long>{
 	private KThread currentThread;
 	private long time = 0;
-	public KThreadTimer(KThread thread, long waitTime){
+	public KThreadTimer_old(KThread thread, long waitTime){
 		this.currentThread=thread;
 		this.time=waitTime;
 	}
@@ -23,4 +23,5 @@ public class KThreadTimer implements Comparable<Long>{
 			return -1;
 		}
 	}
+	
 }

@@ -77,12 +77,14 @@ public class Alarm {
         //waitQueue.add(new KThreadTimer(KThread.currentThread(), wakeTime));
         waitQueue.add(threadTimer);
 
-        KThread.sleep();//Use condition ver to put it to sleep
+        //KThread.sleep();//Use condition ver to put it to sleep
+        KThread.yield();
         
 		Machine.interrupt().restore(Status);
     }
     
     //Need to use PriortyQueue
     PriorityQueue<KThreadTimer> waitQueue = new PriorityQueue<KThreadTimer>();
-    
+    //Create Condition 2, lock
+    //ALsrm wake and sleep the condition 2
 }

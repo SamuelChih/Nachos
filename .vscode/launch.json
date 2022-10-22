@@ -1,5 +1,5 @@
 {
-    // 2 for com and 4 for alarm
+    // pri 5  6  9 for priq  
     "version": "0.2.0",
     "configurations": [
         {
@@ -13,7 +13,7 @@
             "name": "Launch Machine",
             "request": "launch",
             "mainClass": "nachos.machine.Machine",
-            "args": "nachos -- nachos.ag.ThreadGrader5 -s 69",
+            "args": "nachos -- nachos.ag.ThreadGrader6",
             "projectName": "Nachos"
         }
     ]

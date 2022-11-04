@@ -94,8 +94,10 @@ public class UserKernel extends ThreadedKernel {
 
 	UserProcess process = UserProcess.newUserProcess();
 	
-	String shellProgram = Machine.getShellProgramName();	
-	Lib.assertTrue(process.execute(shellProgram, new String[] { }));
+	String shellProgram = Machine.getShellProgramName();
+    String[] realArgs = Machine.getCommandLineArguments();	//Process go through filter out -x etc and only take in file name? .c .o .h .coff
+    
+	Lib.assertTrue(process.execute(shellProgram, realArgs));
 
 	KThread.currentThread().finish();
     }

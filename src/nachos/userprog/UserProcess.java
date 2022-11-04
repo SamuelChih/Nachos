@@ -346,18 +346,18 @@ public class UserProcess {
 	return 0;
     }
 
-
+    //except 353 354 other need to be impliment.
     private static final int
         syscallHalt = 0,
-	syscallExit = 1,
-	syscallExec = 2,
-	syscallJoin = 3,
-	syscallCreate = 4,
-	syscallOpen = 5,
-	syscallRead = 6,
-	syscallWrite = 7,
-	syscallClose = 8,
-	syscallUnlink = 9;
+        syscallExit = 1,
+        syscallExec = 2,
+        syscallJoin = 3,
+        syscallCreate = 4,
+        syscallOpen = 5,
+        syscallRead = 6,
+        syscallWrite = 7,
+        syscallClose = 8,
+        syscallUnlink = 9;
 
     /**
      * Handle a syscall exception. Called by <tt>handleException()</tt>. The
@@ -390,7 +390,20 @@ public class UserProcess {
     public int handleSyscall(int syscall, int a0, int a1, int a2, int a3) {
 	switch (syscall) {
 	case syscallHalt:
-	    return handleHalt();
+	    return handleHalt(); 
+    case syscallExit:
+        
+    case syscallCreate:
+
+    case syscallOpen:
+
+    case syscallRead:
+
+    case syscallWrite:
+
+    case syscallClose:
+    
+    case syscallUnlink:
 
 
 	default:

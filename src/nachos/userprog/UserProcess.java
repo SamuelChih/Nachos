@@ -347,7 +347,7 @@ public class UserProcess {
     }
 
 
-    private static final int
+    private static final int                                           //Syscall numbers, impliment atlrast one in 1,2,3 to make it work
         syscallHalt = 0,
 	syscallExit = 1,
 	syscallExec = 2,

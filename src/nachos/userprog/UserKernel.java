@@ -4,6 +4,10 @@ import nachos.machine.*;
 import nachos.threads.*;
 import nachos.userprog.*;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.*;  
+
 /**
  * A kernel that can support multiple user processes.
  */
@@ -96,7 +100,18 @@ public class UserKernel extends ThreadedKernel {
 	
 	String shellProgram = Machine.getShellProgramName();
     String[] realArgs = Machine.getCommandLineArguments();	//Process go through filter out -x etc and only take in file name? .c .o .h .coff
-    
+    //Pattern p = Pattern.compile("\\w[a-z]+(\\.coff|\\.c|\\.o|\\.h)");
+    List<String> b = new ArrayList<String>();
+    for (int i=0; i<realArgs.length; i++) {
+        if ( realArgs[i].contains(".c")||realArgs[i].contains(".o")||realArgs[i].contains(".h")||realArgs[i].contains(".coff")) {
+            b.add(realArgs[i]);
+        }
+    }
+    if (!b.isEmpty()) {
+      //realArgs = (String[]) b.toArray();
+      realArgs = b.toArray(new String[0]);
+    }
+
 	Lib.assertTrue(process.execute(shellProgram, realArgs));
 
 	KThread.currentThread().finish();

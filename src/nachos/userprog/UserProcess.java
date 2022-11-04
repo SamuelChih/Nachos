@@ -346,7 +346,17 @@ public class UserProcess {
 	return 0;
     }
 
-    //except 353 354 other need to be impliment.
+    private int handleExit(int a0) {
+        unloadSections();
+        for (TranslationEntry translationEntry : pageTable) {
+            
+        }
+
+        return 0;
+    }
+
+
+    //except Exec Join other need to be impliment.
     private static final int
         syscallHalt = 0,
         syscallExit = 1,
@@ -388,10 +398,12 @@ public class UserProcess {
      * @return	the value to be returned to the user.
      */
     public int handleSyscall(int syscall, int a0, int a1, int a2, int a3) {
+    Lib.debug(dbgProcess, syscall+" Called");
 	switch (syscall) {
 	case syscallHalt:
 	    return handleHalt(); 
     case syscallExit:
+        return handleExit(a0);
         
     case syscallCreate:
 
@@ -412,6 +424,7 @@ public class UserProcess {
 	}
 	return 0;
     }
+
 
     /**
      * Handle a user exception. Called by
@@ -459,4 +472,6 @@ public class UserProcess {
 	
     private static final int pageSize = Processor.pageSize;
     private static final char dbgProcess = 'a';
+
+    
 }

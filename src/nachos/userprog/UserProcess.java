@@ -5,6 +5,7 @@ import nachos.threads.*;
 import nachos.userprog.*;
 
 import java.io.EOFException;
+import java.io.FileDescriptor;
 
 /**
  * Encapsulates the state of a user process that is not contained in its
@@ -27,7 +28,14 @@ public class UserProcess {
 	pageTable = new TranslationEntry[numPhysPages];
 	for (int i=0; i<numPhysPages; i++)
 	    pageTable[i] = new TranslationEntry(i,i, true,false,false,false);
+
+    fileDescriptor = new OpenFile[16];
+    fileDescriptor[0]=UserKernel.console.openForReading();
+    fileDescriptor[1]=UserKernel.console.openForWriting();
+
     }
+    
+
     
     /**
      * Allocate and return a new process of the correct class. The class name
@@ -346,18 +354,115 @@ public class UserProcess {
 	return 0;
     }
 
-    private int handleExit(int a0) {
+    private int handleExit() {
         unloadSections();
-        for (TranslationEntry translationEntry : pageTable) {
-            
+        for (int i =2; i<fileDescriptor.length; i++) {
+            if (this.fileDescriptor[i] != null){
+                this.fileDescriptor[i].close();
+            }
+				
         }
 
         return 0;
     }
 
+    private int handleOpen(int a0) {
+        String fileName = readVirtualMemoryString(a0, 256);
+        OpenFile file = ThreadedKernel.fileSystem.open(fileName, false);
+        if (fileName == null) {
+            Lib.assertNotReached("fileDescriptor is invalid, or part of the buffer is read-only or invalid, or if a network stream has been terminated by the remote host and no more data is available.");
+            return -1;
+        }
+        for (int i =2; i<fileDescriptor.length; i++) {
+            if (this.fileDescriptor[i] == null){
+                this.fileDescriptor[i]= file;
+                return i;
+            }
+        }
+        
+        //Can happen if fileDescriptor is full
+        return -1;
+    }
+
+
+
+    private int handleCreate(int a0) {
+        String fileName = readVirtualMemoryString(a0, 256);
+        OpenFile createFile = ThreadedKernel.fileSystem.open(fileName, true);
+        for (int i =2; i<fileDescriptor.length; i++) {
+            if (this.fileDescriptor[i] == null){
+                this.fileDescriptor[i]= createFile;
+                return i;
+            }
+        }
+        //Can happen if fileDescriptor is full
+        return -1;
+    }
+
+    private int handleUnlink(int a0) {
+        String fileName = readVirtualMemoryString(a0, 256);
+        if (fileName == null) {
+            Lib.assertNotReached(" error occurred, fileName == null");
+            return -1;
+        }
+        if(ThreadedKernel.fileSystem.remove(fileName)){
+            return 0;
+        }
+        return -1;
+    }
+
+
+
+    private int handleClose(int a0) {
+        OpenFile file = this.fileDescriptor[a0];
+        if (file == null) {
+            Lib.assertNotReached("fileDescriptor is invalid, or part of the buffer is read-only or invalid, or if a network stream has been terminated by the remote host and no more data is available.");
+            return -1;
+        }
+        file.close();
+        this.fileDescriptor[a0] = null;
+        return 0;
+    }
+
+
+
+    private int handleWrite(int fd, int buffer, int size) {
+        OpenFile file = this.fileDescriptor[fd];
+        byte[] bitArr = new byte[size];
+
+        int bytesLength = this.readVirtualMemory(buffer, bitArr, 0, size);
+        int bytesWrite = file.write(bitArr, 0, bytesLength);
+
+        if (file == null||bytesWrite != size) {
+            return -1;
+            //Lib.assertNotReached("fileDescriptor is invalid, or part of the buffer is read-only or invalid, or if a network stream has been terminated by the remote host and no more data is available.");
+            
+        }
+
+        return bytesWrite;
+    }
+
+
+
+    private int handleRead(int fd, int buffer, int size) {
+        OpenFile file = this.fileDescriptor[fd];
+        byte[] byteArr = new byte[size];
+
+        int readBytes = file.read(byteArr, 0, size);
+        int bytesLength = this.readVirtualMemory(buffer, byteArr, 0, readBytes);
+
+        if (file == null||readBytes != bytesLength) {
+            return -1;
+            //Lib.assertNotReached("fileDescriptor is invalid, or part of the buffer is read-only or invalid, or if a network stream has been terminated by the remote host and no more data is available.");
+        }
+
+        return bytesLength;
+    }
+
+
 
     //except Exec Join other need to be impliment.
-    private static final int                                           //Syscall numbers, impliment atlrast one in 1,2,3 to make it work
+    private static final int                        //Syscall numbers, impliment atlrast one in 1,2,3 to make it work
         syscallHalt = 0,
         syscallExit = 1,
         syscallExec = 2,
@@ -391,11 +496,12 @@ public class UserProcess {
      * </table>
      * 
      * @param	syscall	the syscall number.
-     * @param	a0	the first syscall argument.
-     * @param	a1	the second syscall argument.
-     * @param	a2	the third syscall argument.
+     * @param	a0	the first syscall argument. = fileDescriptor
+     * @param	a1	the second syscall argument. = buffer
+     * @param	a2	the third syscall argument. = size
      * @param	a3	the fourth syscall argument.
      * @return	the value to be returned to the user.
+     * 
      */
     public int handleSyscall(int syscall, int a0, int a1, int a2, int a3) {
     Lib.debug(dbgProcess, syscall+" Called");
@@ -403,19 +509,25 @@ public class UserProcess {
 	case syscallHalt:
 	    return handleHalt(); 
     case syscallExit:
-        return handleExit(a0);
+        return handleExit();
         
     case syscallCreate:
+        return handleCreate(a0);
 
     case syscallOpen:
+        return handleOpen(a0);
 
     case syscallRead:
+        return handleRead(a0, a1, a2);
 
     case syscallWrite:
+        return handleWrite(a0, a1, a2);
 
     case syscallClose:
+        return handleClose(a0);
     
     case syscallUnlink:
+        return handleUnlink(a0);
 
 
 	default:
@@ -424,6 +536,13 @@ public class UserProcess {
 	}
 	return 0;
     }
+
+
+
+
+
+
+
 
 
     /**
@@ -472,6 +591,10 @@ public class UserProcess {
 	
     private static final int pageSize = Processor.pageSize;
     private static final char dbgProcess = 'a';
+
+   
+	private OpenFile[] fileDescriptor;
+    
 
     
 }

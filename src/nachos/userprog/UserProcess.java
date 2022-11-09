@@ -354,16 +354,15 @@ public class UserProcess {
 	return 0;
     }
 
-    private int handleExit() {
+    private void handleExit() {
         unloadSections();
         for (int i =2; i<fileDescriptor.length; i++) {
             if (this.fileDescriptor[i] != null){
-                this.fileDescriptor[i].close();
+                handleClose(i);
             }
-				
         }
-
-        return 0;
+        KThread.currentThread().finish();
+        Machine.terminate();
     }
 
     private int handleOpen(int a0) {
@@ -438,10 +437,8 @@ public class UserProcess {
             //Lib.assertNotReached("fileDescriptor is invalid, or part of the buffer is read-only or invalid, or if a network stream has been terminated by the remote host and no more data is available.");
             
         }
-
         return bytesWrite;
     }
-
 
 
     private int handleRead(int fd, int buffer, int size) {
@@ -449,7 +446,7 @@ public class UserProcess {
         byte[] byteArr = new byte[size];
 
         int readBytes = file.read(byteArr, 0, size);
-        int bytesLength = this.readVirtualMemory(buffer, byteArr, 0, readBytes);
+        int bytesLength = this.writeVirtualMemory(buffer, byteArr, 0, readBytes);
 
         if (file == null||readBytes != bytesLength) {
             return -1;
@@ -504,12 +501,12 @@ public class UserProcess {
      * 
      */
     public int handleSyscall(int syscall, int a0, int a1, int a2, int a3) {
-    Lib.debug(dbgProcess, syscall+" Called");
+    //Lib.debug(dbgProcess, syscall+" Called");
 	switch (syscall) {
 	case syscallHalt:
 	    return handleHalt(); 
     case syscallExit:
-        return handleExit();
+        handleExit();
         
     case syscallCreate:
         return handleCreate(a0);

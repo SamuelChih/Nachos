@@ -103,7 +103,8 @@ public class UserKernel extends ThreadedKernel {
     //Pattern p = Pattern.compile("\\w[a-z]+(\\.coff|\\.c|\\.o|\\.h)");
     List<String> b = new ArrayList<String>();
     for (int i=0; i<realArgs.length; i++) {
-        if ( realArgs[i].contains(".c")||realArgs[i].contains(".o")||realArgs[i].contains(".h")||realArgs[i].contains(".coff")) {
+        if (!realArgs[i].contains("-" )&&realArgs[i].length()>1) {
+        //if ((realArgs[i].contains(".c")||realArgs[i].contains(".o")||realArgs[i].contains(".h")||realArgs[i].contains(".coff" ))&&!realArgs[i].contains("-" )) {
             b.add(realArgs[i]);
         }
     }
@@ -111,9 +112,8 @@ public class UserKernel extends ThreadedKernel {
       //realArgs = (String[]) b.toArray();
       realArgs = b.toArray(new String[0]);
     }
-
 	Lib.assertTrue(process.execute(shellProgram, realArgs));
-
+    
 	KThread.currentThread().finish();
     }
 

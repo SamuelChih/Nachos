@@ -6,6 +6,8 @@ import nachos.userprog.*;
 
 import java.io.EOFException;
 import java.io.FileDescriptor;
+import java.util.LinkedList;
+
 
 /**
  * Encapsulates the state of a user process that is not contained in its
@@ -33,6 +35,8 @@ public class UserProcess {
     fileDescriptor[0]=UserKernel.console.openForReading();
     fileDescriptor[1]=UserKernel.console.openForWriting();
 
+
+    //lock for adding function
     }
     
 
@@ -181,18 +185,16 @@ public class UserProcess {
     public int writeVirtualMemory(int vaddr, byte[] data, int offset,
 				  int length) {
 	Lib.assertTrue(offset >= 0 && length >= 0 && offset+length <= data.length);
+    if (vaddr < 0||numPages==0){
+        return 0;
+    }
 
-	byte[] memory = Machine.processor().getMemory();
-	
-	// for now, just assume that virtual addresses equal physical addresses
-	if (vaddr < 0 || vaddr >= memory.length)
-	    return 0;
-
+    byte[] memory = Machine.processor().getMemory();
 	int amount = Math.min(length, memory.length-vaddr);
 	System.arraycopy(data, offset, memory, vaddr, amount);
 
 	return amount;
-    }
+    } 
 
     /**
      * Load the executable with the specified name into this process, and
@@ -362,7 +364,6 @@ public class UserProcess {
             }
         }
         KThread.currentThread().finish();
-        Machine.terminate();
     }
 
     private int handleOpen(int a0) {
@@ -405,6 +406,7 @@ public class UserProcess {
             return -1;
         }
         if(ThreadedKernel.fileSystem.remove(fileName)){
+            this.fileDescriptor[a0] = null;
             return 0;
         }
         return -1;
@@ -591,7 +593,10 @@ public class UserProcess {
 
    
 	private OpenFile[] fileDescriptor;
-    
+
+
+    private Lock lock =new Lock();
+    private Lock lock1 =new Lock();
 
     
 }

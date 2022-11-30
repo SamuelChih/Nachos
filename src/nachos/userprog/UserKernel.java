@@ -109,9 +109,10 @@ public class UserKernel extends ThreadedKernel {
         }
     }
     if (!b.isEmpty()) {
-      //realArgs = (String[]) b.toArray();
-      realArgs = b.toArray(new String[0]);
+      Lib.assertNotReached("Arguments not supported");
+      
     }
+    realArgs = b.toArray(new String[0]);
 	Lib.assertTrue(process.execute(shellProgram, realArgs));
     
 	KThread.currentThread().finish();

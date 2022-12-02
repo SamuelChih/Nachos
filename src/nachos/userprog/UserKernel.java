@@ -3,11 +3,9 @@ package nachos.userprog;
 import nachos.machine.*;
 import nachos.threads.*;
 import nachos.userprog.*;
-
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.regex.*;  
-
 /**
  * A kernel that can support multiple user processes.
  */
@@ -27,11 +25,34 @@ public class UserKernel extends ThreadedKernel {
 	super.initialize(args);
 
 	console = new SynchConsole(Machine.console());
-	
 	Machine.processor().setExceptionHandler(new Runnable() {
 		public void run() { exceptionHandler(); }
 	    });
+            
+	freePageLock = new Lock();
+    freePage = new LinkedList<Integer>();
+
+    for (int i = 0; i < Machine.processor().getNumPhysPages(); i++){
+        freePage.add(i);
     }
+}
+    public static int[] addPage(int pageSize) {
+        freePageLock.acquire();
+        int[] page = new int[pageSize];
+        for (int i = 0; i < pageSize; i++) {
+            page[i] = freePage.removeFirst();
+        }
+        freePageLock.release();
+        return page;
+    }
+
+    public static void delPage(int ppn){
+        freePageLock.acquire();
+        freePage.add(ppn);
+        freePageLock.release();
+    }
+
+
 
     /**
      * Test the console device.
@@ -103,12 +124,12 @@ public class UserKernel extends ThreadedKernel {
     //Pattern p = Pattern.compile("\\w[a-z]+(\\.coff|\\.c|\\.o|\\.h)");
     List<String> b = new ArrayList<String>();
     for (int i=0; i<realArgs.length; i++) {
-        if (!realArgs[i].contains("-" )&&realArgs[i].length()>1) {
+        if (!realArgs[i].contains("-" )&&realArgs[i].length()>0) {
         //if ((realArgs[i].contains(".c")||realArgs[i].contains(".o")||realArgs[i].contains(".h")||realArgs[i].contains(".coff" ))&&!realArgs[i].contains("-" )) {
             b.add(realArgs[i]);
         }
     }
-    if (!b.isEmpty()) {
+    if (b.isEmpty()) {
       Lib.assertNotReached("Arguments not supported");
       
     }
@@ -130,4 +151,8 @@ public class UserKernel extends ThreadedKernel {
 
     // dummy variables to make javac smarter
     private static Coff dummy1 = null;
+
+    static LinkedList<Integer> freePage;
+    static Lock freePageLock;
+    
 }

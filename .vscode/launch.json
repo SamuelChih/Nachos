@@ -16,11 +16,12 @@
             "projectName": "Nachos",
             //"args": "nachos -- nachos.ag.ThreadGrader6",
 
-            //"args": " -x echo.coff 6 68 419 68419" //echo
-            "args": " -x cat.coff cat.c ", //Print out
+            "args": " -x echo.coff 6 68 419 68419" //echo
+            //"args": " -x cat.coff cat.c ", //Print out
+
             //"args": " -x cp.coff text1.txt text2.txt", //copy file1 to file2
             //"args": " -x halt.coff"
-            "args": " -x rm.coff text1.txt", //remove file1
+            //"args": " -x rm.coff text1.txt", //remove file1
         }
     ]
 }

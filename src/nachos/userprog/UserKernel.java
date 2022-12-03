@@ -32,27 +32,17 @@ public class UserKernel extends ThreadedKernel {
 	freePageLock = new Lock();
     freePage = new LinkedList<Integer>();
 
-    for (int i = 0; i < Machine.processor().getNumPhysPages(); i++){
-        freePage.add(i);
-    }
-}
-    public static int[] addPage(int pageSize) {
+    for (int i = 0; i < Machine.processor().getNumPhysPages(); i++){   
         freePageLock.acquire();
-        int[] page = new int[pageSize];
-        for (int i = 0; i < pageSize; i++) {
-            page[i] = freePage.removeFirst();
-        }
+        freePage.add(i);
         freePageLock.release();
-        return page;
     }
-
+    }
     public static void delPage(int ppn){
         freePageLock.acquire();
         freePage.add(ppn);
         freePageLock.release();
     }
-
-
 
     /**
      * Test the console device.
